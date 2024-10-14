@@ -97,8 +97,8 @@ namespace CP2.API.Presentation.Controllers
         [Produces<VendedorEntity>]
         public IActionResult Delete(int id)
         {
-            _applicationService.DeletarDadosVendedor(id);  // Chame diretamente sem atribuir a uma variável
-            return NoContent();  // Retorne NoContent após a exclusão
+            _applicationService.DeletarDadosVendedor(id);  
+            return NoContent();  
         }
 
     }

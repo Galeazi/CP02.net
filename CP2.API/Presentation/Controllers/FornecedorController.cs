@@ -97,8 +97,8 @@ namespace CP2.API.Presentation.Controllers
         [Produces<FornecedorEntity>]
         public IActionResult Delete(int id)
         {
-            _applicationService.DeletarDadosFornecedor(id);  // Chame diretamente sem atribuir a uma variável
-            return NoContent();  // Retorne NoContent após a exclusão
+            _applicationService.DeletarDadosFornecedor(id);  
+            return NoContent();  
         }
     }
 }

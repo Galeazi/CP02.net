@@ -4,6 +4,7 @@ using CP2.API.Infrastructure.Data.AppData;
 using CP2.API.Infrastructure.Data.Repositories;
 using CP2.API.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,28 +21,40 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseOracle(connectionString);
 });
 
-// Registre os repositórios
+// Adiciona os repositórios e serviços
 builder.Services.AddTransient<IFornecedorRepository, FornecedorRepository>();
-builder.Services.AddTransient<IVendedorRepository, VendedorRepository>(); // Certifique-se de registrar também o VendedorRepository
+builder.Services.AddTransient<IFornecedorApplicationService, FornecedorApplicationService>();
+builder.Services.AddTransient<IVendedorRepository, VendedorRepository>();
+builder.Services.AddTransient<IVendedorApplicationService, VendedorApplicationService>();
 
-// Adicione os controladores
 builder.Services.AddControllers();
 
 // Configuração do Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => {
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API Fornecedor",
+        Version = "v1",
+        Description = "API para cadastro de fornecedores"
+    });
+
     c.EnableAnnotations();
 });
 
 var app = builder.Build();
 
-// Configure o pipeline de requisições HTTP
-if (app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Fornecedor V1");
+    c.RoutePrefix = string.Empty; // Agora o Swagger estará disponível na raiz
+});
 
+app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();
